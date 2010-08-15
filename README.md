@@ -60,7 +60,7 @@ This moulder based snippet:
                repeat("Summer" :: "Autumn" :: "Winter" :: "Spring" :: Nil)) 
                :: attr("class", Values("even" :: "odd" :: Nil).cycle) 
                :: text(eData()) 
-               :: append(h(tr(eData(), (c:String)=>"<p>"+ c +"</p>"))) 
+               :: append(h(tr(eData[String](), (c:String)=>"<p>"+ c +"</p>"))) 
                :: Nil)
     s.process(document)
 
