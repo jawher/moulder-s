@@ -321,7 +321,7 @@ object MouldersSpec extends Specification with Mockito {
     }
   }
 
-  "ChildAppender" should {
+  "Texter" should {
     XMLUnit.setIgnoreWhitespace(true);
     val document = Jsoup.parseBodyFragment("<html><body><outer>test<b a='v'>t</b>s</outer></body></html>")
     val mu = new MoulderUtils(document)
@@ -361,6 +361,66 @@ object MouldersSpec extends Specification with Mockito {
     "do nothing, really" in { 
       assertXMLEqual(new StringReader("<body><outer>test<b a='v'>t</b>s</outer></body>"), new StringReader(
 	html(processed)))
+    }
+  }
+
+  
+  "If" should {
+    XMLUnit.setIgnoreWhitespace(true);
+    val document = Jsoup.parseBodyFragment("<html><body><outer>test</outer></body></html>")
+    val mu = new MoulderUtils(document)
+
+    val element = document.getElementsByTag("outer").first()
+    val nd = (element, Some("data"))
+    
+    val thenMoulder = mock[Moulder]
+    val thenResult = (parseNode("<then>then</then>"), Some("then")) :: Nil
+    thenMoulder.process(nd, mu) returns thenResult
+
+    val elseMoulder = mock[Moulder]
+    val elseResult = (parseNode("<else></else>"), Some("else")) :: Nil
+    elseMoulder.process(nd, mu) returns elseResult
+
+    ", given a value that returns true, " in { 
+      val condition = mock[Value[Boolean]]
+      condition.apply() returns Some(true)
+
+      val a = If(condition, thenMoulder, elseMoulder)
+
+      val processed = a.process(nd, mu)
+    
+      "call bind then apply on its value" in { 
+        there was one(condition).bind(nd) then one(condition).apply()
+      }
+      
+      "call the thenMoulder with the correct args" in { 
+        there was one(thenMoulder).process(nd, mu)
+      }
+
+      "return the thenMoulder result" in { 
+        processed must_== thenResult
+      }
+    }
+
+    ", given a value that returns false, " in { 
+      val condition = mock[Value[Boolean]]
+      condition.apply() returns Some(false)
+
+      val a = If(condition, thenMoulder, elseMoulder)
+
+      val processed = a.process(nd, mu)
+    
+      "call bind then apply on its value" in { 
+        there was one(condition).bind(nd) then one(condition).apply()
+      }
+      
+      "call the elseMoulder with the correct args" in { 
+        there was one(elseMoulder).process(nd, mu)
+      }
+
+      "return the elseMoulder result" in { 
+        processed must_== elseResult
+      }
     }
   }
 

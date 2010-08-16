@@ -166,4 +166,18 @@ object M {
 
   def nop() = Nop()
 
+  case class If(private val condition: Value[Boolean], 
+                private val thenMoulder: Moulder,
+                private val elseMoulder: Moulder) extends Moulder { 
+    override def  process(elementAndData: (Element, Option[Any]), u: MoulderUtils): List[(Node, Option[Any])] = { 
+      condition.bind(elementAndData)
+      condition() match { 
+        case Some(true) => thenMoulder.process(elementAndData, u)
+        case _ => elseMoulder.process(elementAndData, u)
+      }
+    }
+  }
+
+  def ifm(condition: Value[Boolean], theMoulder: Moulder, elseMoulder: Moulder) = If(condition, theMoulder, elseMoulder)
+
 }
