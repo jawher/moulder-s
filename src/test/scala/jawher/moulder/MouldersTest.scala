@@ -346,6 +346,24 @@ object MouldersSpec extends Specification with Mockito {
     }
   }
 
+  "Nop" should {
+    XMLUnit.setIgnoreWhitespace(true);
+    val document = Jsoup.parseBodyFragment("<html><body><outer>test<b a='v'>t</b>s</outer></body></html>")
+    val mu = new MoulderUtils(document)
+
+    val element = document.getElementsByTag("outer").first()
+    val nd = (element, Some("data"))
+
+    val a = Nop()
+
+    val processed = a.process(nd, mu)
+    
+    "do nothing, really" in { 
+      assertXMLEqual(new StringReader("<body><outer>test<b a='v'>t</b>s</outer></body>"), new StringReader(
+	html(processed)))
+    }
+  }
+
   private def parse(s: String) : List[Node] = {
     val d = Jsoup.parseBodyFragment(s)
     new JListWrapper(d.body().childNodes()).toList
