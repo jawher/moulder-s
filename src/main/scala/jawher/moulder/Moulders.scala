@@ -115,6 +115,19 @@ object M {
     }
   }
 
+  case class Replacer(private val content: Value[List[Node]]) extends Moulder { 
+    override def  process(elementAndData: (Element, Option[Any]), u: MoulderUtils): List[(Node, Option[Any])] = { 
+      content.bind(elementAndData)
+      content() match { 
+        case Some(nodes: List[Node]) => nodes.map((_, elementAndData._2))
+        case None => Nil
+      }
+    }
+  }
+
+  def replace(content: Value[List[Node]]) = Replacer(content)
+
+
   def repeat[A](items: Value[List[A]]) = Repeater(items)
 
   case class AttrModifier(private val attr: Value[String], private val value: Value[String]) extends Moulder { 

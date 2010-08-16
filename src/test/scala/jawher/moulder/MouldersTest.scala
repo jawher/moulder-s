@@ -194,6 +194,51 @@ object MouldersSpec extends Specification with Mockito {
     }
   }
 
+  "Replacer" should {
+    XMLUnit.setIgnoreWhitespace(true);
+    val document = Jsoup.parseBodyFragment("<html><body><outer>test</outer></body></html>")
+    val mu = new MoulderUtils(document)
+
+    val element = document.getElementsByTag("outer").first()
+    val nd = (element, Some("data"))
+
+    ", given a value that returns something, " in { 
+      val content = mock[Value[List[Node]]]
+      content.apply() returns Some(parse("<e a='v'>c</e>text"))
+
+      val a = Replacer(content)
+
+      val processed = a.process(nd, mu)
+    
+      "call bind then apply on its value" in { 
+        there was one(content).bind(nd) then one(content).apply()
+      }
+      
+      "replace its element with its content" in { 
+        assertXMLEqual(new StringReader("<body><e a='v'>c</e>text</body>"), new StringReader(
+	  html(processed)))
+      }
+    }
+
+    ", given a value that returns nothing, " in { 
+      val content = mock[Value[List[Node]]]
+      content.apply() returns None
+      
+      val a = Replacer(content)
+
+      val processed = a.process(nd, mu)
+    
+      "call bind then apply on its value" in { 
+        there was one(content).bind(nd) then one(content).apply()
+      }
+      
+      "remove its element" in { 
+        assertXMLEqual(new StringReader("<body></body>"), new StringReader(
+	  html(processed)))
+      }
+    }
+  }
+
   "Repeater" should {
     XMLUnit.setIgnoreWhitespace(true);
     val document = Jsoup.parseBodyFragment("<html><body><outer a='v'>test</outer></body></html>")
