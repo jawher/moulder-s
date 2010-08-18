@@ -15,7 +15,7 @@ case class MoulderUtils(private val doc: Document) {
   }
 }
 
-trait Value[A] extends Function0[Option[A]] { 
+trait Value[+A] extends Function0[Option[A]] { 
   def bind(elementAndData : (Element, Option[Any])): Unit = { }
 }
 
