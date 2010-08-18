@@ -148,15 +148,15 @@ object M {
 
   def attr(attr: Value[String], value: Value[String]) = AttrModifier(attr, value)
 
-  case class Texter(private val text: Value[String]) extends Moulder { 
+  case class Texter(private val text: Value[Any]) extends Moulder { 
     override def  process(elementAndData: (Element, Option[Any]), u: MoulderUtils): List[(Node, Option[Any])] = { 
       text.bind(elementAndData)
-      text().foreach(elementAndData._1.text(_))
+      text().foreach((t: Any) => elementAndData._1.text(t+""))
       List(elementAndData)
     }
   }
 
-  def text(text: Value[String]) = Texter(text)
+  def text(text: Value[Any]) = Texter(text)
 
   case class Nop extends Moulder { 
     override def  process(elementAndData: (Element, Option[Any]), u: MoulderUtils): List[(Node, Option[Any])] = { 
