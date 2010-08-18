@@ -33,4 +33,16 @@ object MoulderUseCases extends Specification {
     s.process(document)
     println(document)
   }
+
+  "Usage of the If moulder" in { 
+    val document = Jsoup.parse("<html><body><ul><li>[...]</li></ul></body></html>")
+    val s = MoulderShop()
+    s.register("li", 
+               repeat(1.to(10).toList)
+               :: attr("class", tr(eData[Int], (x:Int)=>if(x%2==0) "even" else "odd"))
+               :: ifm(tr(eData[Int], (x:Int)=>x%2==0), Texter(eData[Int]), nop())
+               :: Nil)
+    s.process(document)
+    println(document)
+  }
 }
