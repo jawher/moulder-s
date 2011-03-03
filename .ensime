@@ -1,0 +1,11 @@
+;; This config was generated using ensime-config-gen. Feel free to customize its contents manually. 
+
+(
+
+:server-root "/home/djo/.emacs.d/site-lisp/ensime"
+
+:project-package "moulder"
+
+:use-sbt t
+
+)
