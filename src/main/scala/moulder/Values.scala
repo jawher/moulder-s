@@ -1,4 +1,4 @@
-package jawher.moulder
+package moulder
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes._
@@ -32,7 +32,7 @@ object V {
     }
   }
 
-  case class ElementDataValue[A] extends Value[A] { 
+  case class ElementDataValue[A]() extends Value[A] { 
     private var value: Option[A] = None
 
     override def bind(elementAndData: (Element, Option[Any])) = { 
