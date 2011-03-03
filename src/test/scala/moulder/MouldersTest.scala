@@ -1,4 +1,4 @@
-package jawher.moulder
+package moulder
 
 import scala.collection.JavaConversions._
 

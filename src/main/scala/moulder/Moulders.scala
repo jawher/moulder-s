@@ -1,15 +1,20 @@
-package jawher.moulder
+package moulder
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes._
 import scala.collection.JavaConversions._
 
 object M { 
-  case class SubMoulder extends Moulder { 
+  case class SubMoulder() extends Moulder { 
     private var cfg = List[(String, List[Moulder])]()
 
     def register(selector: String, moulders: List[Moulder]) = { 
       cfg = (selector, moulders)::cfg
+      this
+    }
+
+     def register(selector: String, moulders: Moulder*) = { 
+      cfg = (selector, moulders.toList)::cfg
       this
     }
 
@@ -158,7 +163,7 @@ object M {
 
   def text(text: Value[Any]) = Texter(text)
 
-  case class Nop extends Moulder { 
+  case class Nop() extends Moulder { 
     override def  process(elementAndData: (Element, Option[Any]), u: MoulderUtils): List[(Node, Option[Any])] = { 
       List(elementAndData)
     }
