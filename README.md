@@ -4,6 +4,7 @@ Moulder-S
 A tiny jQuery-like HTML templating library written in Scala.
 
 [On templating, and a shameless plug of Moulder](http://jawher.net/2011/01/06/on-templating-and-a-shameless-plug-of-moulder/)
+
 [Moulder in action](http://jawher.net/2011/03/03/moulder-in-action/)
 
 
