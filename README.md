@@ -3,34 +3,21 @@ Moulder-S
 
 A tiny jQuery-like HTML templating library written in Scala.
 
+[On templating, and a shameless plug of Moulder](http://jawher.net/2011/01/06/on-templating-and-a-shameless-plug-of-moulder/)
+[Moulder in action](http://jawher.net/2011/03/03/moulder-in-action/)
+
+
 Building
 --------
 
-You need a Java 5 (or newer) environment and Maven 2.0.9 (or newer) installed:
-
-    $ mvn --version
-    Apache Maven 3.0-alpha-5 (r883378; 2009-11-23 16:53:41+0100)
-    Java version: 1.6.0_15
-    Java home: /usr/lib/jvm/java-6-sun-1.6.0.15/jre
-    Default locale: en_US, platform encoding: UTF-8
-    OS name: "linux" version: "2.6.31-12-generic" arch: "i386" Family: "unix"
-
-You should now be able to do a full build of `neo4j-resources`:
+You'll need SBT 0.10 (or newer):
 
     $ git clone git://github.com/jawher/moulder-s.git
     $ cd moulder-s
-    $ mvn clean install
+    $ sbt package
 
-To use this library in your projects, add the following to the `dependencies` section of your
-`pom.xml`:
+You can then use this library in your projects by grabbing the generated jar (in the `target` directory) and its dependencies.
 
-    <dependency>
-      <groupId>jawher</groupId>
-      <artifactId>moulder-s</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-    </dependency>
-
-If you don't use Maven, take `target/moulder-s-1.0.0-SNAPSHOT.jar` and all of its dependencies, and add them to your classpath.
 
 
 Troubleshooting
@@ -58,9 +45,9 @@ This moulder based snippet:
     val s = MoulderShop()
     s.register("h1", 
                repeat("Summer" :: "Autumn" :: "Winter" :: "Spring" :: Nil)) 
-               :: attr("class", Values("even" :: "odd" :: Nil).cycle) 
-               :: text(eData()) 
-               :: append(h(tr(eData[String](), (c:String)=>"<p>"+ c +"</p>"))) 
+               :: attr("class", SeqValue("even" :: "odd" :: Nil).cycle) 
+               :: text(elemData()) 
+               :: append(html(transform(elemData[String](), (c:String)=>"<p>"+ c +"</p>"))) 
                :: Nil)
     s.process(document)
 
