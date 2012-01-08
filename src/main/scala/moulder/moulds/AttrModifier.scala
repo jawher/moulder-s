@@ -4,7 +4,7 @@ import org.jsoup.nodes._
 import moulder._
 
 case class AttrModifier(private val attr: Value[String], private val value: Value[String]) extends Moulder {
-  override def process(elementAndData: (Element, Option[Any]), u: MoulderUtils): List[(Node, Option[Any])] = {
+  override def process(elementAndData: (Element, Option[Any])): List[(Node, Option[Any])] = {
     attr.bind(elementAndData)
     attr() match {
       case Some(a) => {

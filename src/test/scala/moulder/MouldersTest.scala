@@ -25,7 +25,6 @@ class MouldersSpec extends Specification with Mockito {
   "SubMoulder" should {
     XMLUnit.setIgnoreWhitespace(true);
     val document = Jsoup.parseBodyFragment("<html><body><outer a='v'><a>test</a></outer></body></html>")
-    val mu = new MoulderUtils(document)
 
     val element = document.getElementsByTag("outer").first()
     val nd = (element, Some("data"))
@@ -35,11 +34,11 @@ class MouldersSpec extends Specification with Mockito {
 
     val moulder = mock[Moulder]
     val edc = ArgumentCaptor.forClass(classOf[(Element, Option[Any])])
-    moulder.process(edc.capture(), any[MoulderUtils]) returns List((parseNode("<b>text</b>"), None), (parseNode("text"), None))
+    moulder.process(edc.capture()) returns List((parseNode("<b>text</b>"), None), (parseNode("text"), None))
 
     val sm = new SubMoulder().register("a", List(moulder))
 
-    val processed = sm.process(nd, mu)
+    val processed = sm.process(nd)
 
     "call its registered moulder with the correct params" in {
       subNd must_== edc.getValue()
@@ -54,7 +53,6 @@ class MouldersSpec extends Specification with Mockito {
   "Appender" should {
     XMLUnit.setIgnoreWhitespace(true);
     val document = Jsoup.parseBodyFragment("<html><body><outer>test</outer></body></html>")
-    val mu = new MoulderUtils(document)
 
     val element = document.getElementsByTag("outer").first()
     val nd = (element, Some("data"))
@@ -64,7 +62,7 @@ class MouldersSpec extends Specification with Mockito {
 
     val a = Appender(content)
 
-    val processed = a.process(nd, mu)
+    val processed = a.process(nd)
 
     "call bind then apply on its value" in {
       there was one(content).bind(nd) then one(content).apply()
@@ -79,7 +77,6 @@ class MouldersSpec extends Specification with Mockito {
   "Prepender" should {
     XMLUnit.setIgnoreWhitespace(true);
     val document = Jsoup.parseBodyFragment("<html><body><outer>test</outer></body></html>")
-    val mu = new MoulderUtils(document)
 
     val element = document.getElementsByTag("outer").first()
     val nd = (element, Some("data"))
@@ -89,7 +86,7 @@ class MouldersSpec extends Specification with Mockito {
 
     val a = Prepender(content)
 
-    val processed = a.process(nd, mu)
+    val processed = a.process(nd)
 
     "call bind then apply on its value" in {
       there was one(content).bind(nd) then one(content).apply()
@@ -104,7 +101,6 @@ class MouldersSpec extends Specification with Mockito {
   "ChildAppender" should {
     XMLUnit.setIgnoreWhitespace(true);
     val document = Jsoup.parseBodyFragment("<html><body><outer>test<b a='v'>t</b>s</outer></body></html>")
-    val mu = new MoulderUtils(document)
 
     val element = document.getElementsByTag("outer").first()
     val nd = (element, Some("data"))
@@ -114,7 +110,7 @@ class MouldersSpec extends Specification with Mockito {
 
     val a = ChildAppender(content)
 
-    val processed = a.process(nd, mu)
+    val processed = a.process(nd)
 
     "call bind then apply on its value" in {
       there was one(content).bind(nd) then one(content).apply()
@@ -129,7 +125,6 @@ class MouldersSpec extends Specification with Mockito {
   "ChildPrepender" should {
     XMLUnit.setIgnoreWhitespace(true);
     val document = Jsoup.parseBodyFragment("<html><body><outer>test<b a='v'>t</b>s</outer></body></html>")
-    val mu = new MoulderUtils(document)
 
     val element = document.getElementsByTag("outer").first()
     val nd = (element, Some("data"))
@@ -139,7 +134,7 @@ class MouldersSpec extends Specification with Mockito {
 
     val a = ChildPrepender(content)
 
-    val processed = a.process(nd, mu)
+    val processed = a.process(nd)
 
     "call bind then apply on its value" in {
       there was one(content).bind(nd) then one(content).apply()
@@ -165,7 +160,7 @@ class MouldersSpec extends Specification with Mockito {
 
       val a = Remover(remove)
 
-      val processed = a.process(nd, mu)
+      val processed = a.process(nd)
       "call bind then apply on its value" in {
         there was one(remove).bind(nd) then one(remove).apply()
       }
@@ -182,7 +177,7 @@ class MouldersSpec extends Specification with Mockito {
 
       val a = Remover(remove)
 
-      val processed = a.process(nd, mu)
+      val processed = a.process(nd)
       "call bind then apply on its value" in {
         there was one(remove).bind(nd) then one(remove).apply()
       }
@@ -197,7 +192,6 @@ class MouldersSpec extends Specification with Mockito {
   "Replacer" should {
     XMLUnit.setIgnoreWhitespace(true);
     val document = Jsoup.parseBodyFragment("<html><body><outer>test</outer></body></html>")
-    val mu = new MoulderUtils(document)
 
     val element = document.getElementsByTag("outer").first()
     val nd = (element, Some("data"))
@@ -208,7 +202,7 @@ class MouldersSpec extends Specification with Mockito {
 
       val a = Replacer(content)
 
-      val processed = a.process(nd, mu)
+      val processed = a.process(nd)
 
       "call bind then apply on its value" in {
         there was one(content).bind(nd) then one(content).apply()
@@ -226,7 +220,7 @@ class MouldersSpec extends Specification with Mockito {
 
       val a = Replacer(content)
 
-      val processed = a.process(nd, mu)
+      val processed = a.process(nd)
 
       "call bind then apply on its value" in {
         there was one(content).bind(nd) then one(content).apply()
@@ -242,7 +236,6 @@ class MouldersSpec extends Specification with Mockito {
   "Repeater" should {
     XMLUnit.setIgnoreWhitespace(true);
     val document = Jsoup.parseBodyFragment("<html><body><outer a='v'>test</outer></body></html>")
-    val mu = new MoulderUtils(document)
 
     val element = document.getElementsByTag("outer").first()
     val nd = (element, Some("data"))
@@ -253,7 +246,7 @@ class MouldersSpec extends Specification with Mockito {
 
     val a = Repeater(items)
 
-    val processed = a.process(nd, mu)
+    val processed = a.process(nd)
 
     "call bind then apply on its value" in {
       there was one(items).bind(nd) then one(items).apply()
@@ -273,7 +266,6 @@ class MouldersSpec extends Specification with Mockito {
   "AttrModifier" should {
     XMLUnit.setIgnoreWhitespace(true);
     val document = Jsoup.parseBodyFragment("<html><body><outer a='v'>test</outer></body></html>")
-    val mu = new MoulderUtils(document)
 
     val element = document.getElementsByTag("outer").first()
 
@@ -288,7 +280,7 @@ class MouldersSpec extends Specification with Mockito {
 
       val nd = (element.clone(), Some("data"))
 
-      val processed = a.process(nd, mu)
+      val processed = a.process(nd)
   
       "call bind then apply on its attr and value" in {
         there was one(attr).bind(nd) then one(attr).apply()
@@ -312,7 +304,7 @@ class MouldersSpec extends Specification with Mockito {
 
       val nd = (element.clone(), Some("data"))
 
-      val processed = a.process(nd, mu)
+      val processed = a.process(nd)
       "call bind then apply on its attr and value" in {
         there was one(attr).bind(nd) then one(attr).apply()
         there was one(value).bind(nd) then one(value).apply()
@@ -328,7 +320,6 @@ class MouldersSpec extends Specification with Mockito {
   "Texter" should {
     XMLUnit.setIgnoreWhitespace(true);
     val document = Jsoup.parseBodyFragment("<html><body><outer>test<b a='v'>t</b>s</outer></body></html>")
-    val mu = new MoulderUtils(document)
 
     val element = document.getElementsByTag("outer").first()
     val nd = (element, Some("data"))
@@ -338,7 +329,7 @@ class MouldersSpec extends Specification with Mockito {
 
     val a = Texter(text)
 
-    val processed = a.process(nd, mu)
+    val processed = a.process(nd)
 
     "call bind then apply on its value" in {
       there was one(text).bind(nd) then one(text).apply()
@@ -353,14 +344,13 @@ class MouldersSpec extends Specification with Mockito {
   "Nop" should {
     XMLUnit.setIgnoreWhitespace(true);
     val document = Jsoup.parseBodyFragment("<html><body><outer>test<b a='v'>t</b>s</outer></body></html>")
-    val mu = new MoulderUtils(document)
 
     val element = document.getElementsByTag("outer").first()
     val nd = (element, Some("data"))
 
     val a = Nop()
 
-    val processed = a.process(nd, mu)
+    val processed = a.process(nd)
 
     "do nothing, really" in {
       XMLUnit.compareXML(new StringReader("<body><outer>test<b a='v'>t</b>s</outer></body>"), new StringReader(
