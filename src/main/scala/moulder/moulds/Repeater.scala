@@ -4,10 +4,9 @@ import org.jsoup.nodes._
 import moulder._
 
 case class Repeater[A](private val items: Value[List[A]]) extends Moulder {
-  override def process(elementAndData: (Element, Option[Any])): List[(Node, Option[Any])] = {
-    items.bind(elementAndData)
+  override def process(element: Element): List[Node] = {
     items() match {
-      case Some(data) => data.map((i: A) => (copy(elementAndData._1), Some(i)))
+      case Some(data) => data.map((i: A) => copy(element))
       case None => Nil
     }
   }

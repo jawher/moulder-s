@@ -5,8 +5,7 @@ import moulder._
 
 case class Appender(private val content: Value[List[Node]]) extends Moulder {
 
-  override def process(elementAndData: (Element, Option[Any])): List[(Node, Option[Any])] = {
-    content.bind(elementAndData)
-    List(elementAndData) ::: content().map(_.map(_ -> elementAndData._2)).getOrElse(Nil)
+  override def process(element: Element): List[Node] = {
+    (List(element):List[Node]) ::: content().getOrElse(Nil)
   }
 }
