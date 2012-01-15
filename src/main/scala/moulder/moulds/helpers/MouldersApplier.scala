@@ -1,13 +1,21 @@
 package moulder.moulds.helpers
 
-/**
- * Created by IntelliJ IDEA.
- * User: jawher
- * Date: 8/1/12
- * Time: 6:41 PM
- * To change this template use File | Settings | File Templates.
- */
+import moulder.Moulder
+import org.jsoup.nodes.{Element, Node}
 
 object MouldersApplier {
+  private def applyMoulder(m: Moulder, nodes: List[Node]): List[Node] = {
+    nodes.flatMap(_ match {
+      case ed: Element => m.process(ed)
+      case nd: Node => List(nd)
+    })
+  }
+
+  def applyMoulders(ms: List[Moulder], nodes: List[Node]): List[Node] = {
+    if (ms.isEmpty)
+      nodes
+    else
+      applyMoulders(ms.tail, applyMoulder(ms.head, nodes))
+  }
 
 }

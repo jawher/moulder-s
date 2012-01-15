@@ -22,7 +22,14 @@ object Moulds {
 
   def replace(content: Value[List[Node]]) = Replacer(content)
 
-  def repeat[A](items: Value[List[A]]) = Repeater(items)
+  def repeat[A](items: Value[List[A]], m: (A, Int) => List[Moulder]) = Repeater(items, m)
+
+
+  def repeat[A](items: Value[List[A]]) = Repeater(items, (item: A, index: Int) => Nil)
+
+  def repeatN(n: Value[Int]) = Repeater(Value.of(n().map(0 until _).map(_.toList)), (item: Int, index: Int) => Nil)
+
+  def repeat[A](items: Value[List[A]], moulds: List[Moulder]) = Repeater(items, (item: A, index: Int) => moulds)
 
   def attr(attr: Value[String], value: Value[String]) = AttrModifier(attr, value)
 

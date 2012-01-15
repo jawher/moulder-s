@@ -10,4 +10,8 @@ object Value {
   def apply[A](a: A) = new Value[A]() {
     def apply() = Some(a)
   }
+
+  def of[A](a: Option[A]) = new Value[A]() {
+    def apply() = a
+  }
 }

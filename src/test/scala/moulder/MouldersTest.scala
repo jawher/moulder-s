@@ -229,33 +229,100 @@ class MouldersSpec extends Specification with Mockito {
 
   "Repeater" should {
     XMLUnit.setIgnoreWhitespace(true);
-    val document = Jsoup.parseBodyFragment("<html><body><outer a='v'>test</outer></body></html>")
 
-    val element = document.getElementsByTag("outer").first()
 
-    val list = 1 :: 3 :: 4 :: 7 :: Nil
-    val items = mock[Value[List[Int]]]
-    items.apply() returns Some(list)
+    "Given an None value" in {
+      val document = Jsoup.parseBodyFragment("<html><body><outer a='v'>test</outer></body></html>")
 
-    val a = Repeater(items)
+      val element = document.getElementsByTag("outer").first()
 
-    val processed = a.process(element)
+      val items = mock[Value[List[Int]]]
+      items.apply() returns None
 
-    "call apply on its value" in {
-      there was one(items).apply()
+      val a = Repeater(items, (item: Int, index: Int) => Nil)
+
+      val processed = a.process(element)
+
+      "call apply on its value" in {
+        there was one(items).apply()
+      }
+
+      "remove its element" in {
+        XMLUnit.compareXML(new StringReader("<body></body>"), new StringReader(
+          html(processed))).identical() must beTrue
+      }
     }
 
-    "repeat its elements for every item" in {
-      XMLUnit.compareXML(new StringReader("<body><outer a='v'>test</outer><outer a='v'>test</outer><outer a='v'>test</outer><outer a='v'>test</outer></body>"), new StringReader(
-        html(processed))).identical() must beTrue
+    "Given an empty list of values" in {
+      val document = Jsoup.parseBodyFragment("<html><body><outer a='v'>test</outer></body></html>")
+
+      val element = document.getElementsByTag("outer").first()
+
+      val items = mock[Value[List[Int]]]
+      items.apply() returns Some(Nil)
+
+      val a = Repeater(items, (item: Int, index: Int) => Nil)
+
+      val processed = a.process(element)
+
+      "call apply on its value" in {
+        there was one(items).apply()
+      }
+
+      "remove its element" in {
+        XMLUnit.compareXML(new StringReader("<body></body>"), new StringReader(
+          html(processed))).identical() must beTrue
+      }
+    }
+
+    "Given an non empty list of items and no moulders" in {
+      val document = Jsoup.parseBodyFragment("<html><body><outer a='v'>test</outer></body></html>")
+
+      val element = document.getElementsByTag("outer").first()
+
+      val list = 1 :: 3 :: 4 :: 7 :: Nil
+      val items = mock[Value[List[Int]]]
+      items.apply() returns Some(list)
+
+      val a = Repeater(items, (item: Int, index: Int) => Nil)
+
+      val processed = a.process(element)
+
+      "call apply on its value" in {
+        there was one(items).apply()
+      }
+
+      "repeat its elements for every item" in {
+        XMLUnit.compareXML(new StringReader("<body><outer a='v'>test</outer><outer a='v'>test</outer><outer a='v'>test</outer><outer a='v'>test</outer></body>"), new StringReader(
+          html(processed))).identical() must beTrue
+      }
+    }
+
+    "Given an non empty list of items and a moulder" in {
+      val document = Jsoup.parseBodyFragment("<html><body><outer a='v'>test</outer></body></html>")
+
+      val element = document.getElementsByTag("outer").first()
+
+      val list = "a" :: "b" :: Nil
+
+      val mould = (item: String, index: Int) => new Moulder {
+        def process(element: Element): List[Node] = List(parseNode("<b>" +
+          item + "</b>"), parseNode("index=" + index))
+      } :: Nil
+
+      val a = Repeater(Value(list), mould)
+
+      val processed = a.process(element)
+
+      "repeat its elements for every item" in {
+        XMLUnit.compareXML(new StringReader("<body><b>a</b>index=0<b>b</b>index=1</body>"), new StringReader(
+          html(processed))).identical() must beTrue
+      }
     }
   }
 
   "AttrModifier" should {
     XMLUnit.setIgnoreWhitespace(true);
-
-
-
 
     "Given a value that returns something" in {
       val document = Jsoup.parseBodyFragment("<html><body><outer a='v'>test</outer></body></html>")
