@@ -15,7 +15,7 @@ You'll need SBT 0.10 (or newer):
 
     $ git clone git://github.com/jawher/moulder-s.git
     $ cd moulder-s
-    $ sbt package
+    $ sbt package publish-local
 
 You can then use this library in your projects by grabbing the generated jar (in the `target` directory) and its dependencies.
 
@@ -44,12 +44,12 @@ This moulder based snippet:
 
     val document = Jsoup.parse("<html><body><h1>[...]</h1></body></html>")
     val s = MoulderShop()
-    s.register("h1", 
-               repeat("Summer" :: "Autumn" :: "Winter" :: "Spring" :: Nil)) 
-               :: attr("class", SeqValue("even" :: "odd" :: Nil).cycle) 
-               :: text(elemData()) 
-               :: append(html(transform(elemData[String](), (c:String)=>"<p>"+ c +"</p>"))) 
-               :: Nil)
+    s.register("h1",
+      repeat(items)
+        :: attr("class", SeqValue("even" :: "odd" :: Nil).cycle)
+        :: text(SeqValue(items))
+        :: append(html(transform(SeqValue(items), (c: String) => "<p>" + c + "</p>")))
+        :: Nil)
     s.process(document)
 
 
